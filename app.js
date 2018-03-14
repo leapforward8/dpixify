@@ -10,7 +10,8 @@ var express               = require("express"),
     
     
     
-mongoose.connect("mongodb://localhost/dpixify");
+//mongoose.connect("mongodb://localhost/dpixify");
+mongoose.connect("mongodb://amethyst:099UCCR69pz@ds213239.mlab.com:13239/dpixify");
 
 app.set("view engine", "ejs");
 
