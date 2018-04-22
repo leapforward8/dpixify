@@ -6,8 +6,8 @@ var express = require("express"),
   bodyParser = require("body-parser"),
   User = require("./models/user"),
   LocalStrategy = require("passport-local"),
-  passportLocalMongoose = require("passport-local-mongoose");
-Strategy = require("passport-steemconnect").Strategy;
+  passportLocalMongoose = require("passport-local-mongoose"),
+  Strategy = require("passport-steemconnect").Strategy;
 
 passport.use(new LocalStrategy(User.authenticate()));
 
@@ -16,9 +16,9 @@ passport.use(
     {
       authorizationURL: `https://steemconnect.com/oauth2/authorize`,
       tokenURL: `https://steemconnect.com/oauth2/token`,
-      clientID: process.env.clientID,
-      clientSecret: process.env.clientSecret,
-      callbackURL: `http://localhost:3000/auth/oauth/oauth2/callback`,
+      clientID: `dpixify.app`,
+      clientSecret: `8166a43d296771776a23f9c6cda92d92a703931134a99fcc`,
+      callbackURL: `https://dpixify-leap8.c9users.io/auth/oauth/oauth2/callback`,
       scope: ["offline", "vote"]
     },
     function(accessToken, refreshToken, profile, cb) {
