@@ -4,10 +4,10 @@
 	<title>free stock photos on STEEM blockchain</title>
 	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-	<link rel="stylesheet" type="text/css" href="/stylesheets/main.css">
+	<link rel="stylesheet" type="text/css" href="/stylesheets/main.css"> 
     <script src="https://code.jquery.com/jquery-git2.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-
+	
 </head>
 <body>
 	<nav class="navbar navbar-inverse navbar-fixed-top">
@@ -26,39 +26,37 @@
 					<li><a href="#"><!--- About----></a></li>
 					<li><a href="#"><!--- Contact--></a></li>
 				</ul>
-
+				
 				 <form class="navbar-form navbar-left" role="search">
 					<div class="form-group">
 					  <input type="text" class="form-control" placeholder="Search">
 					</div>
 					<button type="submit" class="btn btn-default">Submit</button>
 				 </form>
-
+				
 				<ul class="nav navbar-nav navbar-right">
-				  <% if (!currentUser) { %>
+				  <% if (!currentUser) { %> 
 					     <li><a href="/register">Sign Up</a></li>
 			  		   <li><a href="/login">Login</a></li>
 					<% } else { %>
-						 <% if (currentUser.displayName) { %>
-							 <li><a href="#">Signed In As <span class="username"><%= currentUser.displayName %></span></a></li>
-						 <% } else { %>
-									<li><a href="#">Signed In As <span class="username"><%= currentUser.username %></span></a></li>
-							<% } %>
+					     <li><a href="#">Signed In As <%= currentUser.username %></a></li>
 				  	   <li><a href="/logout">Logout</a></li>
-				  <% } %>
+				  <% } %>	   
 				</ul>
 			</div>
 		</div>
 	</nav>
-
+	
 	 <div class="container">
        <% if(error && error.length > 0) { %>
          <div class="alert alert-danger"><p><%=error %></p></div>
        <% } %>
-
+       
        <% if(success && success.length > 0) { %>
          <div class="alert alert-success"><p><%= success %></p></div>
        <% } %>
     </div>
 
   <div class="container">
+      
+      
