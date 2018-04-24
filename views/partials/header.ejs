@@ -39,11 +39,7 @@
 					     <li><a href="/register">Sign Up</a></li>
 			  		   <li><a href="/login">Login</a></li>
 					<% } else { %>
-						 <% if (currentUser.displayName) { %>
-							 <li><a href="#">Signed In As <span class="username"><%= currentUser.displayName %></span></a></li>
-						 <% } else { %>
-									<li><a href="#">Signed In As <span class="username"><%= currentUser.username %></span></a></li>
-							<% } %>
+							<li><a href="#">Signed In As <span class="username"><%= currentUser.username %></span></a></li>
 				  	   <li><a href="/logout">Logout</a></li>
 				  <% } %>
 				</ul>
