@@ -6,8 +6,8 @@ var express = require("express"),
   bodyParser = require("body-parser"),
   User = require("./models/user"),
   LocalStrategy = require("passport-local"),
-  passportLocalMongoose = require("passport-local-mongoose");
-Strategy = require("passport-steemconnect").Strategy;
+  passportLocalMongoose = require("passport-local-mongoose"),
+  Strategy = require("passport-steemconnect").Strategy;
 
 passport.use(new LocalStrategy(User.authenticate()));
 
@@ -17,28 +17,46 @@ passport.use(
       authorizationURL: `https://steemconnect.com/oauth2/authorize`,
       tokenURL: `https://steemconnect.com/api/oauth2/token`,
       clientID: process.env.clientID,
-      clientSecret: process.env.clientSecret,
+     clientSecret: process.env.clientSecret,
       callbackURL: `http://localhost:3000/auth/oauth/oauth2/callback`,
-      scope: ["offline", "vote"]
+      scope: ["vote", "comment"]
     },
     function(accessToken, refreshToken, profile, cb) {
-      return cb(null, profile);
+      let userInfo = {
+        _id: profile.id,
+        username: profile.username,
+        password: null,
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+        profile: profile
+      };
+
+      User.update({ _id: userInfo._id }, userInfo, { upsert: true }, function(
+        err,
+        result
+      ) {
+        err ? console.log(err) : cb(null, profile);
+      });
     }
   )
 );
 
 passport.serializeUser(function(user, cb) {
-  cb(null, user);
+  cb(null, user.id);
 });
 
 passport.deserializeUser(function(obj, cb) {
-  cb(null, obj);
+  User.findOne({ _id: obj }, (err, user) => {
+    err ? console.log(err) : cb(null, user.profile);
+  });
 });
-
-//mongoose.connect("mongodb://localhost/dpixify");
+/*
+mongoose.connect("mongodb://localhost/dpix");
+*/
 mongoose.connect(
   "mongodb://amethyst:099UCCR69pz@ds213239.mlab.com:13239/dpixify"
 );
+
 
 app.set("view engine", "ejs");
 
@@ -98,6 +116,10 @@ app.get(
     failureRedirect: "/login"
   }),
   function(req, res) {
+    req.flash(
+      "success",
+      "Successfully Logged In With SteemConnect! Welcome " + req.user.username
+    );
     res.redirect("/");
   }
 );
