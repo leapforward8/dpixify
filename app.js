@@ -1,17 +1,62 @@
-var express               = require("express"),
-    app                   = express(),
-    mongoose              = require("mongoose"),
-    flash                 = require("connect-flash"),
-    passport              = require("passport"),
-    bodyParser            = require("body-parser"),
-    User                  = require("./models/user"),
-    LocalStrategy         = require("passport-local"),
-    passportLocalMongoose = require("passport-local-mongoose");
-    
-    
-    
-//mongoose.connect("mongodb://localhost/dpixify");
-mongoose.connect("mongodb://amethyst:099UCCR69pz@ds213239.mlab.com:13239/dpixify");
+var express = require("express"),
+  app = express(),
+  mongoose = require("mongoose"),
+  flash = require("connect-flash"),
+  passport = require("passport"),
+  bodyParser = require("body-parser"),
+  User = require("./models/user"),
+  LocalStrategy = require("passport-local"),
+  passportLocalMongoose = require("passport-local-mongoose"),
+  Strategy = require("passport-steemconnect").Strategy;
+
+passport.use(new LocalStrategy(User.authenticate()));
+
+passport.use(
+  new Strategy(
+    {
+      authorizationURL: `https://steemconnect.com/oauth2/authorize`,
+      tokenURL: `https://steemconnect.com/api/oauth2/token`,
+      clientID: `dpixify.app`,
+     clientSecret: `8166a43d296771776a23f9c6cda92d92a703931134a99fcc`,
+      callbackURL: `https://dpixify-dev.herokuapp.com/auth/oauth/oauth2/callback`,
+      scope: ["vote", "comment"]
+    },
+    function(accessToken, refreshToken, profile, cb) {
+      let userInfo = {
+        _id: profile.id,
+        username: profile.username,
+        password: null,
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+        profile: profile
+      };
+
+      User.update({ _id: userInfo._id }, userInfo, { upsert: true }, function(
+        err,
+        result
+      ) {
+        err ? console.log(err) : cb(null, profile);
+      });
+    }
+  )
+);
+
+passport.serializeUser(function(user, cb) {
+  cb(null, user.id);
+});
+
+passport.deserializeUser(function(obj, cb) {
+  User.findOne({ _id: obj }, (err, user) => {
+    err ? console.log(err) : cb(null, user.profile);
+  });
+});
+/*
+mongoose.connect("mongodb://localhost/dpix");
+*/
+mongoose.connect(
+  "mongodb://amethyst:099UCCR69pz@ds213239.mlab.com:13239/dpixify"
+);
+
 
 app.set("view engine", "ejs");
 
@@ -53,7 +98,7 @@ app.get("/about", function(req, res){
 });
 
 app.get("/submit", isLoggedIn, function(req, res){
-   res.render("submit"); 
+   res.render("submit");
 });
 
 // AUTH ROUTES
@@ -61,6 +106,22 @@ app.get("/submit", isLoggedIn, function(req, res){
 app.get("/register", function(req, res) {
     res.render("register");
 });
+
+app.get("/login/steemconnect", passport.authenticate("steemconnect"));
+
+app.get(
+  "/auth/oauth/oauth2/callback",
+  passport.authenticate("steemconnect", {
+    failureRedirect: "/login"
+  }),
+  function(req, res) {
+    req.flash(
+      "success",
+      "Successfully Logged In With SteemConnect! Welcome " + req.user.username
+    );
+    res.redirect("/");
+  }
+);
 
 // handling user signup
 app.post("/register", function(req, res){
@@ -91,7 +152,7 @@ app.get("/login", function(req, res) {
 app.post("/login", passport.authenticate("local", {
         successRedirect: "/submit",
         failureRedirect: "/login",
-        failureFlash: true 
+        failureFlash: true
     }), function(req, res){
 });
 
@@ -111,4 +172,3 @@ function isLoggedIn(req, res, next) {
 app.listen(process.env.PORT, process.env.IP, function(){
     console.log("dPixify server started.......");
 });
-

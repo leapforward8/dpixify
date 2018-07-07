@@ -39,7 +39,11 @@
 					     <li><a href="/register">Sign Up</a></li>
 			  		   <li><a href="/login">Login</a></li>
 					<% } else { %>
+<<<<<<< HEAD
 					     <li><a href="#">Signed In As <%= currentUser.username %></a></li>
+=======
+							<li><a href="#">Signed In As <span class="username"><%= currentUser.username %></span></a></li>
+>>>>>>> pr/3
 				  	   <li><a href="/logout">Logout</a></li>
 				  <% } %>	   
 				</ul>
