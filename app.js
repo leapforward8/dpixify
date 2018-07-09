@@ -18,7 +18,7 @@ passport.use(
       tokenURL: `https://steemconnect.com/api/oauth2/token`,
       clientID: `dpixify.app`,
      clientSecret: `8166a43d296771776a23f9c6cda92d92a703931134a99fcc`,
-      callbackURL: `https://dpixify-dev.herokuapp.com/auth/oauth/oauth2/callback`,
+      callbackURL: `https://dpixify.herokuapp.com/auth/oauth/oauth2/callback`,
       scope: ["vote", "comment"]
     },
     function(accessToken, refreshToken, profile, cb) {
